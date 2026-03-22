@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio 2026 Francisco Ferreira</title>
+    <meta name="description" content="Uma ponte para os meus projectos">
+    <script src="https://aframe.io/releases/1.7.1/aframe.min.js"></script>
+    <script src="audio-unlock.js"></script>
+    <script src="movement.js"></script>
+    <script src="portal.js"></script>
+    <script src="overlay.js"></script>
+    <script src="joystick.js"></script>
+    <script src="VRoverlay.js"></script>
+  </head>
+  <body>
+    
+    <a-scene>
+      <audio id="ambient-sound" src="morning.mp3" preload="auto"></audio>
+
+      <a-assets>
+        <a-asset-item id="ctree" src="Ctree.glb"></a-asset-item>
+        <a-asset-item id="grave" src="gravestone.glb"></a-asset-item>
+        <a-asset-item id="note" src="note.glb"></a-asset-item>
+      </a-assets>
+
+      <a-entity
+        sound="src: #ambient-sound;
+        autoplay: true;
+        loop: true;
+        volume: 0.5;
+        positional: false">
+      </a-entity>
+
+      <a-entity
+        gltf-model="#ctree"
+        position="2 0.5 -4"
+        rotation="0 180 0"
+        scale="0.2 0.2 0.2">
+      </a-entity>
+
+      <a-entity
+        gltf-model="#note"
+        position="0 1.6 -4"
+        rotation="0 180 0"
+        scale="9 9 9">
+      </a-entity>
+      
+      <a-entity
+        gltf-model="#grave"
+        position="-2 1.1 -4"
+        rotation="0 0 0"
+        scale="0.3 0.3 0.3">
+      </a-entity>
+
+      <!-- Sky -->
+      <a-sky src="./lotus.jpg"></a-sky>
+
+      <!-- Floor -->
+      <a-plane 
+        position="0 0 -10" 
+        rotation="-90 0 0" 
+        width="100" 
+        height="100" 
+        color="#222" 
+        material="opacity: 0.9; roughness: 1"
+      ></a-plane>
+
+      <!-- PORTAL TO SantaPopUp -->
+      <a-entity
+        id="portal-SantaPopUp"
+        class="interactive"
+        position="2 1.6 -4"
+        portal="url: https://captainxico.github.io/SantaPopUp/; radius: 1.2"
+      >
+      <!-- Portal visual -->
+      <a-cylinder
+        radius="0.7"
+        height="2"
+        color="#00ffff"
+        material="opacity: 0.3; emissive: #00ffff; emissiveIntensity: 0.8"
+      ></a-cylinder>
+
+      <!-- Portal text -->
+      <a-text
+        value="Santa PopUp"
+        align="center"
+        position="0 1.5 0"
+        color="#ffffff"
+      ></a-text>
+    </a-entity>
+
+      <!-- PORTAL TO conway-2x-layer -->
+      <a-entity
+        id="portal-conway"
+        class="interactive"
+        position="0 1.6 -4"
+        portal="url: https://captainxico.github.io/conway-2x-layer/; radius: 1.2"
+      >
+      <!-- Portal visual -->
+      <a-cylinder
+        radius="0.7"
+        height="2"
+        color="#502473"
+        material="opacity: 0.3; emissive: #502473; emissiveIntensity: 0.8"
+      ></a-cylinder>
+
+      <!-- Portal text -->
+      <a-text
+        value="Conway's 2 layers"
+        align="center"
+        position="0 1.5 0"
+        color="#ffffff"
+      ></a-text>
+    </a-entity>
+
+      <!-- PORTAL TO Horror Game -->
+      <a-entity
+        id="Horror-Game"
+        class="interactive"
+        position="-2 1.6 -4"
+        portal="url: https://captainxico.github.io/SnowyCemeteryHorrorGame/; radius: 1.2"
+      >
+      <!-- Portal visual -->
+      <a-cylinder
+        radius="0.7"
+        height="2"
+        color="#502473"
+        material="opacity: 0.3; emissive: #8b0000; emissiveIntensity: 0.8"
+      ></a-cylinder>
+
+      <!-- Portal text -->
+      <a-text
+        value="Snowy Horror game"
+        align="center"
+        position="0 1.5 0"
+        color="#ffffff"
+      ></a-text>
+    </a-entity>
+
+
+      <!-- Camera rig with controllers as children -->
+      <a-entity id="camera-rig" player-jump>
+        <a-camera id="camera" position="0 1.6 0" look-controls="pointerLockEnabled: true">
+          <a-cursor id="desktop-cursor" rayOrigin="mouse" raycaster="objects: .interactive" visible="false" desktop-cursor-only></a-cursor>
+        </a-camera>
+
+        <!-- Left controller -->
+        <a-entity
+          id="left-controller"
+          laser-controls="hand: left"
+          raycaster="objects: .interactive; far: 10"
+          line="color: #00ff00; opacity: 0.8; lineWidth: 2;"
+           cursor="rayOrigin: entity"
+          thumbstick-audio
+          smooth-locomotion
+        ></a-entity>
+
+        <!-- Right controller -->
+        <a-entity
+          id="right-controller"
+          laser-controls="hand: right"
+          raycaster="objects: .interactive; far: 10"
+          line="color: #00ff00; opacity: 0.8; lineWidth: 2;"
+          cursor="rayOrigin: entity"
+          vr-smooth-turn
+          thumbstick-audio
+        ></a-entity>
+      </a-entity>
+
+      <!-- LIGHTS -->
+    <a-light type="ambient" intensity="0.4"></a-light>
+    <a-light type="point" position="0 4 2" intensity="1"></a-light>
+
+    </a-scene>
+  </body>
+</html>
