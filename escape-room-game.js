@@ -7,12 +7,50 @@ document.addEventListener('DOMContentLoaded', function() {
         correctSequence: ['🌙', '⭐', '🔥'],
         currentInput: [],
         doorUnlocked: false,
-        noteRead: false
+        noteRead: false,
+        cursorMode: 'vr' // Track current cursor mode
     };
 
     // UI Elements
     const gravestoneDisplay = document.getElementById('gravestone-display');
     const exitDoor = document.getElementById('exit-door');
+    const camera = document.getElementById('camera');
+    const desktopCursor = document.getElementById('desktop-cursor');
+
+    // Cursor management functions
+    function enableDesktopCursor() {
+        if (camera && desktopCursor) {
+            camera.setAttribute('look-controls', 'pointerLockEnabled: false');
+            desktopCursor.setAttribute('visible', 'true');
+            gameState.cursorMode = 'desktop';
+        }
+    }
+
+    function enableVRCursor() {
+        if (camera && desktopCursor) {
+            camera.setAttribute('look-controls', 'pointerLockEnabled: true');
+            desktopCursor.setAttribute('visible', 'false');
+            gameState.cursorMode = 'vr';
+        }
+    }
+
+    function showUIWithCursor(uiElement, closeCallback) {
+        enableDesktopCursor();
+        document.body.appendChild(uiElement);
+        
+        // Add close button handler
+        const closeButtons = uiElement.querySelectorAll('button');
+        closeButtons.forEach(button => {
+            if (button.textContent.toLowerCase().includes('close') || 
+                button.textContent.toLowerCase().includes('cancel')) {
+                button.addEventListener('click', () => {
+                    uiElement.remove();
+                    enableVRCursor();
+                    if (closeCallback) closeCallback();
+                });
+            }
+        });
+    }
 
     // Register puzzle piece component
     AFRAME.registerComponent('puzzle-piece', {
@@ -106,7 +144,7 @@ To escape the darkness of this roof.`;
             riddleBox.innerHTML = `
                 <h3 style="margin-top: 0; color: #ffd700;">Ancient Note</h3>
                 <p style="margin: 20px 0; line-height: 1.6;">${riddleText}</p>
-                <button onclick="this.parentElement.remove()" style="
+                <button class="close-btn" style="
                     background: #ffd700;
                     color: black;
                     border: none;
@@ -116,7 +154,8 @@ To escape the darkness of this roof.`;
                     font-weight: bold;
                 ">Close</button>
             `;
-            document.body.appendChild(riddleBox);
+
+            showUIWithCursor(riddleBox);
         }
     });
 
@@ -186,7 +225,7 @@ To escape the darkness of this roof.`;
                     cursor: pointer;
                     margin-right: 10px;
                 ">Clear</button>
-                <button onclick="closeSymbolSelector()" style="
+                <button class="close-btn" style="
                     background: #666;
                     color: white;
                     border: none;
@@ -196,7 +235,7 @@ To escape the darkness of this roof.`;
                 ">Close</button>
             `;
 
-            document.body.appendChild(selector);
+            showUIWithCursor(selector);
         },
 
         updateDisplay() {
@@ -212,10 +251,14 @@ To escape the darkness of this roof.`;
             if (isCorrect) {
                 gameState.doorUnlocked = true;
                 this.unlockDoor();
+                enableVRCursor(); // Restore VR cursor after solving
             } else {
                 this.showMessage('Wrong sequence! Try again.');
                 gameState.currentInput = [];
-                setTimeout(() => this.updateDisplay(), 1000);
+                setTimeout(() => {
+                    this.updateDisplay();
+                    enableVRCursor(); // Restore VR cursor after showing message
+                }, 1000);
             }
         },
 
@@ -378,6 +421,7 @@ To escape the darkness of this roof.`;
     window.closeSymbolSelector = function() {
         const selector = document.getElementById('symbol-selector');
         if (selector) selector.remove();
+        enableVRCursor();
     };
 
     // Game initialization
