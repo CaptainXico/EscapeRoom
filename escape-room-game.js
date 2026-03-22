@@ -100,41 +100,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
         onHover() {
             gameState.hoveredObject = this.el;
-            this.showHoverHint();
+            // Don't show hint for puzzle pieces - only for obelisk and note
         },
 
         onUnhover() {
             if (gameState.hoveredObject === this.el) {
                 gameState.hoveredObject = null;
             }
-            this.hideHoverHint();
-        },
-
-        showHoverHint() {
-            // Show "Press E" hint
-            const hint = document.createElement('div');
-            hint.id = 'hover-hint';
-            hint.style.cssText = `
-                position: fixed;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                background: rgba(0, 255, 0, 0.9);
-                color: black;
-                padding: 10px 20px;
-                border-radius: 5px;
-                font-size: 16px;
-                font-weight: bold;
-                z-index: 1500;
-                pointer-events: none;
-            `;
-            hint.textContent = 'Press E to interact';
-            document.body.appendChild(hint);
-        },
-
-        hideHoverHint() {
-            const hint = document.getElementById('hover-hint');
-            if (hint) hint.remove();
         },
 
         interact() {
@@ -654,17 +626,6 @@ To escape the darkness of this roof.`;
                 component['gravestone-puzzle'].interact();
             } else if (component && component['escape-door']) {
                 component['escape-door'].interact();
-            }
-        }
-        
-        // Manual cursor toggle for testing
-        if (e.key.toLowerCase() === 'c') {
-            if (gameState.cursorMode === 'vr') {
-                console.log('Manual: Releasing pointer lock');
-                enableDesktopCursor();
-            } else {
-                console.log('Manual: Will re-enter pointer lock on scene click');
-                enableVRCursor();
             }
         }
     });
