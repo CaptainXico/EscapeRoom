@@ -50,6 +50,24 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    function enableVRCursorImmediate() {
+        if (camera && desktopCursor) {
+            console.log('Immediately requesting pointer lock');
+            
+            // Enable pointer lock immediately
+            const scene = document.querySelector('a-scene');
+            if (scene) {
+                scene.requestPointerLock();
+            }
+            
+            // Update raycaster
+            desktopCursor.setAttribute('raycaster', 'objects: .interactive');
+            
+            gameState.cursorMode = 'vr';
+            gameState.firstClickAfterUI = false;
+        }
+    }
+
     function showUIWithCursor(uiElement, closeCallback) {
         console.log('Showing UI with cursor');
         
@@ -71,7 +89,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     e.preventDefault();
                     e.stopPropagation();
                     uiElement.remove();
-                    enableVRCursor();
+                    enableVRCursorImmediate(); // Use immediate pointer lock
                     if (closeCallback) closeCallback();
                 });
             }
@@ -82,7 +100,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (e.key === 'Escape') {
                 console.log('Escape key pressed');
                 uiElement.remove();
-                enableVRCursor();
+                enableVRCursorImmediate(); // Use immediate pointer lock
                 document.removeEventListener('keydown', escapeHandler);
                 if (closeCallback) closeCallback();
             }
@@ -388,13 +406,13 @@ To escape the darkness of this roof.`;
             if (isCorrect) {
                 gameState.doorUnlocked = true;
                 this.unlockDoor();
-                enableVRCursor(); // Restore VR cursor after solving
+                enableVRCursorImmediate(); // Restore VR cursor immediately after solving
             } else {
                 this.showMessage('Wrong sequence! Try again.');
                 gameState.currentInput = [];
                 setTimeout(() => {
                     this.updateDisplay();
-                    enableVRCursor(); // Restore VR cursor after showing message
+                    enableVRCursorImmediate(); // Restore VR cursor immediately after showing message
                 }, 1000);
             }
         },
@@ -603,7 +621,7 @@ To escape the darkness of this roof.`;
     window.closeSymbolSelector = function() {
         const selector = document.getElementById('symbol-selector');
         if (selector) selector.remove();
-        enableVRCursor();
+        enableVRCursorImmediate(); // Use immediate pointer lock
     };
 
     // Game initialization
