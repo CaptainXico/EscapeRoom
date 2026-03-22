@@ -20,43 +20,69 @@ document.addEventListener('DOMContentLoaded', function() {
     // Cursor management functions
     function enableDesktopCursor() {
         if (camera && desktopCursor) {
-            // Disable pointer lock and show cursor
+            console.log('Enabling desktop cursor');
+            
+            // Disable pointer lock
             camera.setAttribute('look-controls', 'pointerLockEnabled: false');
+            
+            // Make cursor visible and interactive
             desktopCursor.setAttribute('visible', 'true');
             desktopCursor.setAttribute('raycaster', 'objects: .interactive, button, [class*="close-btn"]');
+            
+            // Force system cursor
+            document.body.style.cursor = 'auto';
+            document.querySelector('a-scene').style.cursor = 'auto';
+            
             gameState.cursorMode = 'desktop';
             
-            // Force cursor to be visible
-            document.body.style.cursor = 'auto';
+            // Add a delay to ensure changes take effect
+            setTimeout(() => {
+                console.log('Desktop cursor enabled');
+            }, 100);
         }
     }
 
     function enableVRCursor() {
         if (camera && desktopCursor) {
-            // Enable pointer lock and hide cursor
+            console.log('Enabling VR cursor');
+            
+            // Enable pointer lock
             camera.setAttribute('look-controls', 'pointerLockEnabled: true');
+            
+            // Hide cursor
             desktopCursor.setAttribute('visible', 'false');
             desktopCursor.setAttribute('raycaster', 'objects: .interactive');
-            gameState.cursorMode = 'vr';
             
             // Hide system cursor
             document.body.style.cursor = 'none';
+            document.querySelector('a-scene').style.cursor = 'none';
+            
+            gameState.cursorMode = 'vr';
+            
+            setTimeout(() => {
+                console.log('VR cursor enabled');
+            }, 100);
         }
     }
 
     function showUIWithCursor(uiElement, closeCallback) {
-        enableDesktopCursor();
+        console.log('Showing UI with cursor');
         
-        // Make sure UI is on top
+        // Make sure UI is on top and interactive
         uiElement.style.zIndex = '9999';
+        uiElement.style.pointerEvents = 'auto';
         document.body.appendChild(uiElement);
         
-        // Add close button handler with proper event handling
+        // Enable desktop cursor
+        enableDesktopCursor();
+        
+        // Add close button handler
         const closeButtons = uiElement.querySelectorAll('button');
         closeButtons.forEach(button => {
             if (button.textContent.toLowerCase().includes('close') || 
                 button.textContent.toLowerCase().includes('cancel')) {
                 button.addEventListener('click', (e) => {
+                    console.log('Close button clicked');
                     e.preventDefault();
                     e.stopPropagation();
                     uiElement.remove();
@@ -69,6 +95,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Also close on Escape key
         const escapeHandler = (e) => {
             if (e.key === 'Escape') {
+                console.log('Escape key pressed');
                 uiElement.remove();
                 enableVRCursor();
                 document.removeEventListener('keydown', escapeHandler);
@@ -77,10 +104,10 @@ document.addEventListener('DOMContentLoaded', function() {
         };
         document.addEventListener('keydown', escapeHandler);
         
-        // Make sure cursor can interact with UI
+        // Force cursor to be visible after a delay
         setTimeout(() => {
-            enableDesktopCursor(); // Re-enable after a delay to ensure it sticks
-        }, 100);
+            enableDesktopCursor();
+        }, 200);
     }
 
     // Register puzzle piece component
@@ -458,4 +485,20 @@ To escape the darkness of this roof.`;
     // Game initialization
     console.log('Escape Room Game Initialized');
     console.log('Find 3 symbols and solve the gravestone puzzle to escape!');
+    
+    // Add manual cursor toggle for testing
+    document.addEventListener('keydown', (e) => {
+        if (e.key.toLowerCase() === 'c') {
+            if (gameState.cursorMode === 'vr') {
+                console.log('Manual: Switching to desktop cursor');
+                enableDesktopCursor();
+            } else {
+                console.log('Manual: Switching to VR cursor');
+                enableVRCursor();
+            }
+        }
+    });
+    
+    // Start in VR mode
+    enableVRCursor();
 });
