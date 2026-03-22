@@ -121,7 +121,7 @@
       <!-- Camera rig with controllers as children -->
       <a-entity id="camera-rig" player-jump>
         <a-camera id="camera" position="0 1.6 0" look-controls="pointerLockEnabled: true">
-          <a-cursor id="desktop-cursor" rayOrigin="mouse" raycaster="objects: .interactive" visible="false" desktop-cursor-only></a-cursor>
+          <a-cursor id="desktop-cursor" rayOrigin="mouse" raycaster="objects: .interactive, button, [class*='close-btn']" visible="true"></a-cursor>
         </a-camera>
 
         <!-- Left controller -->
