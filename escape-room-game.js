@@ -9,7 +9,8 @@ document.addEventListener('DOMContentLoaded', function() {
         doorUnlocked: false,
         noteRead: false,
         cursorMode: 'vr', // Track current cursor mode
-        firstClickAfterUI: false // Track if first click after UI should be for pointer lock
+        firstClickAfterUI: false, // Track if first click after UI should be for pointer lock
+        hoveredObject: null // Track what object is being looked at
     };
 
     // UI Elements
@@ -92,10 +93,51 @@ document.addEventListener('DOMContentLoaded', function() {
     // Register puzzle piece component
     AFRAME.registerComponent('puzzle-piece', {
         init() {
-            this.el.addEventListener('click', () => this.collectSymbol());
+            // Add hover detection
+            this.el.addEventListener('mouseenter', () => this.onHover());
+            this.el.addEventListener('mouseleave', () => this.onUnhover());
         },
 
-        collectSymbol() {
+        onHover() {
+            gameState.hoveredObject = this.el;
+            this.showHoverHint();
+        },
+
+        onUnhover() {
+            if (gameState.hoveredObject === this.el) {
+                gameState.hoveredObject = null;
+            }
+            this.hideHoverHint();
+        },
+
+        showHoverHint() {
+            // Show "Press E" hint
+            const hint = document.createElement('div');
+            hint.id = 'hover-hint';
+            hint.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: rgba(0, 255, 0, 0.9);
+                color: black;
+                padding: 10px 20px;
+                border-radius: 5px;
+                font-size: 16px;
+                font-weight: bold;
+                z-index: 1500;
+                pointer-events: none;
+            `;
+            hint.textContent = 'Press E to interact';
+            document.body.appendChild(hint);
+        },
+
+        hideHoverHint() {
+            const hint = document.getElementById('hover-hint');
+            if (hint) hint.remove();
+        },
+
+        interact() {
             const symbol = this.el.dataset.symbol;
             const found = this.el.dataset.found === 'true';
 
@@ -144,10 +186,51 @@ document.addEventListener('DOMContentLoaded', function() {
     // Register note puzzle component
     AFRAME.registerComponent('note-puzzle', {
         init() {
-            this.el.addEventListener('click', () => this.readNote());
+            // Add hover detection
+            this.el.addEventListener('mouseenter', () => this.onHover());
+            this.el.addEventListener('mouseleave', () => this.onUnhover());
         },
 
-        readNote() {
+        onHover() {
+            gameState.hoveredObject = this.el;
+            this.showHoverHint();
+        },
+
+        onUnhover() {
+            if (gameState.hoveredObject === this.el) {
+                gameState.hoveredObject = null;
+            }
+            this.hideHoverHint();
+        },
+
+        showHoverHint() {
+            // Show "Press E" hint
+            const hint = document.createElement('div');
+            hint.id = 'hover-hint';
+            hint.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: rgba(0, 255, 0, 0.9);
+                color: black;
+                padding: 10px 20px;
+                border-radius: 5px;
+                font-size: 16px;
+                font-weight: bold;
+                z-index: 1500;
+                pointer-events: none;
+            `;
+            hint.textContent = 'Press E to read note';
+            document.body.appendChild(hint);
+        },
+
+        hideHoverHint() {
+            const hint = document.getElementById('hover-hint');
+            if (hint) hint.remove();
+        },
+
+        interact() {
             if (!gameState.noteRead) {
                 gameState.noteRead = true;
                 this.showRiddle();
@@ -199,7 +282,52 @@ To escape the darkness of this roof.`;
     // Register gravestone puzzle component
     AFRAME.registerComponent('gravestone-puzzle', {
         init() {
-            this.el.addEventListener('click', () => this.inputSymbol());
+            // Add hover detection
+            this.el.addEventListener('mouseenter', () => this.onHover());
+            this.el.addEventListener('mouseleave', () => this.onUnhover());
+        },
+
+        onHover() {
+            gameState.hoveredObject = this.el;
+            this.showHoverHint();
+        },
+
+        onUnhover() {
+            if (gameState.hoveredObject === this.el) {
+                gameState.hoveredObject = null;
+            }
+            this.hideHoverHint();
+        },
+
+        showHoverHint() {
+            // Show "Press E" hint
+            const hint = document.createElement('div');
+            hint.id = 'hover-hint';
+            hint.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: rgba(0, 255, 0, 0.9);
+                color: black;
+                padding: 10px 20px;
+                border-radius: 5px;
+                font-size: 16px;
+                font-weight: bold;
+                z-index: 1500;
+                pointer-events: none;
+            `;
+            hint.textContent = 'Press E to input symbols';
+            document.body.appendChild(hint);
+        },
+
+        hideHoverHint() {
+            const hint = document.getElementById('hover-hint');
+            if (hint) hint.remove();
+        },
+
+        interact() {
+            this.inputSymbol();
         },
 
         inputSymbol() {
@@ -337,7 +465,52 @@ To escape the darkness of this roof.`;
     // Register escape door component
     AFRAME.registerComponent('escape-door', {
         init() {
-            this.el.addEventListener('click', () => this.tryExit());
+            // Add hover detection
+            this.el.addEventListener('mouseenter', () => this.onHover());
+            this.el.addEventListener('mouseleave', () => this.onUnhover());
+        },
+
+        onHover() {
+            gameState.hoveredObject = this.el;
+            this.showHoverHint();
+        },
+
+        onUnhover() {
+            if (gameState.hoveredObject === this.el) {
+                gameState.hoveredObject = null;
+            }
+            this.hideHoverHint();
+        },
+
+        showHoverHint() {
+            const message = gameState.doorUnlocked ? 'Press E to escape!' : 'Press E to try door';
+            const hint = document.createElement('div');
+            hint.id = 'hover-hint';
+            hint.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: ${gameState.doorUnlocked ? 'rgba(0, 255, 0, 0.9)' : 'rgba(255, 0, 0, 0.9)'};
+                color: ${gameState.doorUnlocked ? 'black' : 'white'};
+                padding: 10px 20px;
+                border-radius: 5px;
+                font-size: 16px;
+                font-weight: bold;
+                z-index: 1500;
+                pointer-events: none;
+            `;
+            hint.textContent = message;
+            document.body.appendChild(hint);
+        },
+
+        hideHoverHint() {
+            const hint = document.getElementById('hover-hint');
+            if (hint) hint.remove();
+        },
+
+        interact() {
+            this.tryExit();
         },
 
         tryExit() {
@@ -465,19 +638,26 @@ To escape the darkness of this roof.`;
     console.log('Escape Room Game Initialized');
     console.log('Find 3 symbols and solve the gravestone puzzle to escape!');
     
-    // Global click handler to manage first click after UI
-    document.addEventListener('click', (e) => {
-        if (gameState.firstClickAfterUI && !e.target.closest('[class*="close-btn"]') && !e.target.closest('button')) {
-            console.log('First click after UI - should be for pointer lock');
-            gameState.firstClickAfterUI = false;
-            
-            // Don't prevent the click - let A-Frame handle pointer lock
-            // Just clear the flag so subsequent clicks work normally
-        }
-    });
-    
-    // Add manual cursor toggle for testing
+    // Global E key handler for interactions
     document.addEventListener('keydown', (e) => {
+        if (e.key.toLowerCase() === 'e' && gameState.hoveredObject) {
+            e.preventDefault();
+            console.log('E key pressed on object:', gameState.hoveredObject);
+            
+            // Call the interact method if it exists
+            const component = gameState.hoveredObject.components;
+            if (component && component['puzzle-piece']) {
+                component['puzzle-piece'].interact();
+            } else if (component && component['note-puzzle']) {
+                component['note-puzzle'].interact();
+            } else if (component && component['gravestone-puzzle']) {
+                component['gravestone-puzzle'].interact();
+            } else if (component && component['escape-door']) {
+                component['escape-door'].interact();
+            }
+        }
+        
+        // Manual cursor toggle for testing
         if (e.key.toLowerCase() === 'c') {
             if (gameState.cursorMode === 'vr') {
                 console.log('Manual: Releasing pointer lock');
@@ -486,6 +666,17 @@ To escape the darkness of this roof.`;
                 console.log('Manual: Will re-enter pointer lock on scene click');
                 enableVRCursor();
             }
+        }
+    });
+    
+    // Global click handler to manage first click after UI
+    document.addEventListener('click', (e) => {
+        if (gameState.firstClickAfterUI && !e.target.closest('[class*="close-btn"]') && !e.target.closest('button')) {
+            console.log('First click after UI - should be for pointer lock');
+            gameState.firstClickAfterUI = false;
+            
+            // Don't prevent the click - let A-Frame handle pointer lock
+            // Just clear the flag so subsequent clicks work normally
         }
     });
     
