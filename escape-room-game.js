@@ -512,6 +512,9 @@ To escape the darkness of this roof.`;
         },
 
         showVictoryScreen() {
+            // Enable desktop cursor for victory screen interaction
+            enableDesktopCursor();
+            
             const victoryScreen = document.createElement('div');
             victoryScreen.style.cssText = `
                 position: fixed;
