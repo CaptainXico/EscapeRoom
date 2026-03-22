@@ -20,36 +20,67 @@ document.addEventListener('DOMContentLoaded', function() {
     // Cursor management functions
     function enableDesktopCursor() {
         if (camera && desktopCursor) {
+            // Disable pointer lock and show cursor
             camera.setAttribute('look-controls', 'pointerLockEnabled: false');
             desktopCursor.setAttribute('visible', 'true');
+            desktopCursor.setAttribute('raycaster', 'objects: .interactive, button, [class*="close-btn"]');
             gameState.cursorMode = 'desktop';
+            
+            // Force cursor to be visible
+            document.body.style.cursor = 'auto';
         }
     }
 
     function enableVRCursor() {
         if (camera && desktopCursor) {
+            // Enable pointer lock and hide cursor
             camera.setAttribute('look-controls', 'pointerLockEnabled: true');
             desktopCursor.setAttribute('visible', 'false');
+            desktopCursor.setAttribute('raycaster', 'objects: .interactive');
             gameState.cursorMode = 'vr';
+            
+            // Hide system cursor
+            document.body.style.cursor = 'none';
         }
     }
 
     function showUIWithCursor(uiElement, closeCallback) {
         enableDesktopCursor();
+        
+        // Make sure UI is on top
+        uiElement.style.zIndex = '9999';
         document.body.appendChild(uiElement);
         
-        // Add close button handler
+        // Add close button handler with proper event handling
         const closeButtons = uiElement.querySelectorAll('button');
         closeButtons.forEach(button => {
             if (button.textContent.toLowerCase().includes('close') || 
                 button.textContent.toLowerCase().includes('cancel')) {
-                button.addEventListener('click', () => {
+                button.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
                     uiElement.remove();
                     enableVRCursor();
                     if (closeCallback) closeCallback();
                 });
             }
         });
+        
+        // Also close on Escape key
+        const escapeHandler = (e) => {
+            if (e.key === 'Escape') {
+                uiElement.remove();
+                enableVRCursor();
+                document.removeEventListener('keydown', escapeHandler);
+                if (closeCallback) closeCallback();
+            }
+        };
+        document.addEventListener('keydown', escapeHandler);
+        
+        // Make sure cursor can interact with UI
+        setTimeout(() => {
+            enableDesktopCursor(); // Re-enable after a delay to ensure it sticks
+        }, 100);
     }
 
     // Register puzzle piece component
