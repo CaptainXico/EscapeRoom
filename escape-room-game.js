@@ -8,7 +8,8 @@ document.addEventListener('DOMContentLoaded', function() {
         currentInput: [],
         doorUnlocked: false,
         noteRead: false,
-        cursorMode: 'vr' // Track current cursor mode
+        cursorMode: 'vr', // Track current cursor mode
+        firstClickAfterUI: false // Track if first click after UI should be for pointer lock
     };
 
     // UI Elements
@@ -40,6 +41,9 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Re-enable pointer lock - user needs to click scene
             desktopCursor.setAttribute('raycaster', 'objects: .interactive');
+            
+            // Set flag that next click should be for pointer lock
+            gameState.firstClickAfterUI = true;
             
             gameState.cursorMode = 'vr';
         }
@@ -460,6 +464,17 @@ To escape the darkness of this roof.`;
     // Game initialization
     console.log('Escape Room Game Initialized');
     console.log('Find 3 symbols and solve the gravestone puzzle to escape!');
+    
+    // Global click handler to manage first click after UI
+    document.addEventListener('click', (e) => {
+        if (gameState.firstClickAfterUI && !e.target.closest('[class*="close-btn"]') && !e.target.closest('button')) {
+            console.log('First click after UI - should be for pointer lock');
+            gameState.firstClickAfterUI = false;
+            
+            // Don't prevent the click - let A-Frame handle pointer lock
+            // Just clear the flag so subsequent clicks work normally
+        }
+    });
     
     // Add manual cursor toggle for testing
     document.addEventListener('keydown', (e) => {
