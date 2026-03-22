@@ -132,23 +132,71 @@ To escape the darkness of this roof.`;
                 return;
             }
 
-            // Cycle through found symbols
-            const nextSymbol = this.getNextSymbol();
-            gameState.currentInput.push(nextSymbol);
-
-            // Update display
-            this.updateDisplay();
-
-            // Check if puzzle is solved
-            if (gameState.currentInput.length === 3) {
-                this.checkSolution();
-            }
+            // Show symbol selection interface
+            this.showSymbolSelector();
         },
 
-        getNextSymbol() {
-            const foundSymbols = gameState.foundSymbols;
-            const currentIndex = foundSymbols.indexOf(gameState.currentInput[gameState.currentInput.length - 1]) || -1;
-            return foundSymbols[(currentIndex + 1) % foundSymbols.length];
+        showSymbolSelector() {
+            // Remove existing selector if present
+            const existing = document.getElementById('symbol-selector');
+            if (existing) existing.remove();
+
+            const selector = document.createElement('div');
+            selector.id = 'symbol-selector';
+            selector.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: rgba(0, 0, 0, 0.95);
+                color: white;
+                padding: 30px;
+                border-radius: 15px;
+                z-index: 2000;
+                border: 2px solid #00ff00;
+            `;
+
+            const symbols = gameState.foundSymbols;
+            const currentDisplay = gameState.currentInput.map(s => s || '_').join(' ');
+            
+            selector.innerHTML = `
+                <h3 style="margin-top: 0; color: #00ff00;">Choose Symbol</h3>
+                <p style="margin-bottom: 20px;">Current: ${currentDisplay}</p>
+                <div style="display: flex; gap: 15px; margin-bottom: 20px;">
+                    ${symbols.map(symbol => `
+                        <button onclick="selectSymbol('${symbol}')" style="
+                            background: #333;
+                            color: white;
+                            border: 2px solid #00ff00;
+                            padding: 15px;
+                            border-radius: 10px;
+                            cursor: pointer;
+                            font-size: 24px;
+                            transition: all 0.3s;
+                        " onmouseover="this.style.background='#00ff00'; this.style.color='black'" 
+                           onmouseout="this.style.background='#333'; this.style.color='white'">${symbol}</button>
+                    `).join('')}
+                </div>
+                <button onclick="clearSymbols()" style="
+                    background: #ff0000;
+                    color: white;
+                    border: none;
+                    padding: 10px 20px;
+                    border-radius: 5px;
+                    cursor: pointer;
+                    margin-right: 10px;
+                ">Clear</button>
+                <button onclick="closeSymbolSelector()" style="
+                    background: #666;
+                    color: white;
+                    border: none;
+                    padding: 10px 20px;
+                    border-radius: 5px;
+                    cursor: pointer;
+                ">Close</button>
+            `;
+
+            document.body.appendChild(selector);
         },
 
         updateDisplay() {
@@ -288,6 +336,49 @@ To escape the darkness of this roof.`;
         }
     `;
     document.head.appendChild(style);
+
+    // Global functions for symbol selector
+    window.selectSymbol = function(symbol) {
+        if (gameState.currentInput.length < 3) {
+            gameState.currentInput.push(symbol);
+            
+            // Update gravestone display
+            const display = gameState.currentInput.map(s => s || '_').join(' ');
+            gravestoneDisplay.setAttribute('value', display);
+            
+            // Update selector display
+            const selector = document.getElementById('symbol-selector');
+            if (selector) {
+                const currentDisplay = gameState.currentInput.map(s => s || '_').join(' ');
+                selector.querySelector('p').textContent = `Current: ${currentDisplay}`;
+            }
+            
+            // Check if puzzle is solved
+            if (gameState.currentInput.length === 3) {
+                setTimeout(() => {
+                    const gravestoneComponent = document.querySelector('[gravestone-puzzle]').components['gravestone-puzzle'];
+                    gravestoneComponent.checkSolution();
+                    closeSymbolSelector();
+                }, 500);
+            }
+        }
+    };
+
+    window.clearSymbols = function() {
+        gameState.currentInput = [];
+        const display = gameState.currentInput.map(s => s || '_').join(' ');
+        gravestoneDisplay.setAttribute('value', display);
+        
+        const selector = document.getElementById('symbol-selector');
+        if (selector) {
+            selector.querySelector('p').textContent = `Current: ${display}`;
+        }
+    };
+
+    window.closeSymbolSelector = function() {
+        const selector = document.getElementById('symbol-selector');
+        if (selector) selector.remove();
+    };
 
     // Game initialization
     console.log('Escape Room Game Initialized');
