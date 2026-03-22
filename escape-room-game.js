@@ -17,51 +17,31 @@ document.addEventListener('DOMContentLoaded', function() {
     const camera = document.getElementById('camera');
     const desktopCursor = document.getElementById('desktop-cursor');
 
-    // Cursor management functions
+    // Cursor management functions - simplified to work with A-Frame's built-in behavior
     function enableDesktopCursor() {
         if (camera && desktopCursor) {
-            console.log('Enabling desktop cursor');
+            console.log('Requesting pointer lock release');
             
-            // Disable pointer lock
-            camera.setAttribute('look-controls', 'pointerLockEnabled: false');
+            // Exit pointer lock - A-Frame will handle cursor visibility
+            if (document.pointerLockElement) {
+                document.exitPointerLock();
+            }
             
-            // Make cursor visible and interactive
-            desktopCursor.setAttribute('visible', 'true');
+            // Make sure cursor can interact with UI
             desktopCursor.setAttribute('raycaster', 'objects: .interactive, button, [class*="close-btn"]');
             
-            // Force system cursor
-            document.body.style.cursor = 'auto';
-            document.querySelector('a-scene').style.cursor = 'auto';
-            
             gameState.cursorMode = 'desktop';
-            
-            // Add a delay to ensure changes take effect
-            setTimeout(() => {
-                console.log('Desktop cursor enabled');
-            }, 100);
         }
     }
 
     function enableVRCursor() {
         if (camera && desktopCursor) {
-            console.log('Enabling VR cursor');
+            console.log('Requesting pointer lock');
             
-            // Enable pointer lock
-            camera.setAttribute('look-controls', 'pointerLockEnabled: true');
-            
-            // Hide cursor
-            desktopCursor.setAttribute('visible', 'false');
+            // Re-enable pointer lock - user needs to click scene
             desktopCursor.setAttribute('raycaster', 'objects: .interactive');
             
-            // Hide system cursor
-            document.body.style.cursor = 'none';
-            document.querySelector('a-scene').style.cursor = 'none';
-            
             gameState.cursorMode = 'vr';
-            
-            setTimeout(() => {
-                console.log('VR cursor enabled');
-            }, 100);
         }
     }
 
@@ -73,7 +53,7 @@ document.addEventListener('DOMContentLoaded', function() {
         uiElement.style.pointerEvents = 'auto';
         document.body.appendChild(uiElement);
         
-        // Enable desktop cursor
+        // Exit pointer lock to show cursor
         enableDesktopCursor();
         
         // Add close button handler
@@ -103,11 +83,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         };
         document.addEventListener('keydown', escapeHandler);
-        
-        // Force cursor to be visible after a delay
-        setTimeout(() => {
-            enableDesktopCursor();
-        }, 200);
     }
 
     // Register puzzle piece component
@@ -490,10 +465,10 @@ To escape the darkness of this roof.`;
     document.addEventListener('keydown', (e) => {
         if (e.key.toLowerCase() === 'c') {
             if (gameState.cursorMode === 'vr') {
-                console.log('Manual: Switching to desktop cursor');
+                console.log('Manual: Releasing pointer lock');
                 enableDesktopCursor();
             } else {
-                console.log('Manual: Switching to VR cursor');
+                console.log('Manual: Will re-enter pointer lock on scene click');
                 enableVRCursor();
             }
         }
