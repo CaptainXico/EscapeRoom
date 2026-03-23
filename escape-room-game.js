@@ -223,6 +223,14 @@ document.addEventListener('DOMContentLoaded', function() {
         interact() {
             if (!gameState.noteRead) {
                 gameState.noteRead = true;
+                
+                // Animate book - scale up, then back to normal
+                this.el.setAttribute('animation', 'property: scale; to: 1.2 1.2 1.2; dur: 300; easing: easeInOutQuad');
+                
+                setTimeout(() => {
+                    this.el.setAttribute('animation', 'property: scale; to: 1 1 1; dur: 300; easing: easeInOutQuad');
+                }, 300);
+                
                 this.showRiddle();
             }
         },
