@@ -45,6 +45,31 @@
         data-found="false">
       </a-entity>
 
+      <!-- Floating crystal with symbol -->
+      <a-entity id="crystal"
+        gltf-model="#crystal"
+        position="-3 2 3"
+        rotation="0 0 0"
+        scale="1 1 1"
+        class="interactive" 
+        puzzle-piece 
+        data-symbol="⭐" 
+        data-found="false"
+        animation="property: rotation; to: 0 360 0; loop: true; dur: 5000">
+      </a-entity>
+
+       <!-- Ancient book with symbol -->
+      <a-entity id="leather_book"
+        gltf-model="#leather_book"
+        position="3 0.5 2"
+        rotation="0 0 0"
+        scale="1 1 1"
+        class="interactive" 
+        puzzle-piece 
+        data-symbol="🔥" 
+        data-found="false">
+      </a-entity>
+
       <!-- Interactive Note with riddle -->
       <a-entity
         gltf-model="#note"
@@ -65,32 +90,6 @@
         gravestone-puzzle>
         <!-- Symbol display on gravestone -->
         <a-text id="gravestone-display" value="___" position="0 2 0.5" rotation="0 0 0" align="center" color="#00ff00" scale="1 1 1"></a-text>
-      </a-entity>
-
-      <!-- Additional puzzle objects -->
-      <!-- Floating crystal with symbol -->
-      <a-entity id="crystal"
-        gltf-model="#crystal"
-        position="-3 2 3"
-        rotation="0 0 0"
-        scale="1 1 1"
-        class="interactive" 
-        puzzle-piece 
-        data-symbol="⭐" 
-        data-found="false"
-        animation="property: rotation; to: 0 360 0; loop: true; dur: 5000">
-      </a-entity>
-
-      <!-- Ancient book with symbol -->
-      <a-entity id="leather_book"
-        gltf-model="#leather_book"
-        position="3 0.5 2"
-        rotation="0 0 0"
-        scale="1 1 1"
-        class="interactive" 
-        puzzle-piece 
-        data-symbol="🔥" 
-        data-found="false">
       </a-entity>
 
       <!-- Room Boundaries -->
