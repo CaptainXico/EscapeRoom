@@ -24,6 +24,7 @@
         <a-asset-item id="crystal" src="crystal.glb"></a-asset-item>
         <a-asset-item id="magical_book" src="magical_book.glb"></a-asset-item>
         <a-asset-item id="desk" src="desk.glb"></a-asset-item>
+        <a-asset-item id="globe" src="antique_globe.glb"></a-asset-item>
       </a-assets>
 
       <a-entity
@@ -33,7 +34,8 @@
         volume: 0.5;
         positional: false">
       </a-entity>
-
+      
+      <!-- NON Interactives -->
       <a-entity
         id="desk"
         gltf-model="#desk"
@@ -42,6 +44,14 @@
         rotation="0 90 0"
       ></a-entity>
 
+      <a-entity
+        id="globe"
+        gltf-model="#desk"
+        scale="2 2 2"
+        position="4 1.4 2.2"
+        rotation="0 90 0"
+      ></a-entity>
+      
       <!-- Interactive Tree with hidden symbol -->
       <a-entity
         gltf-model="#ctree"
