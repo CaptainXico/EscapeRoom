@@ -136,7 +136,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 this.el.dataset.found = 'true';
                 
                 // Visual feedback
-                this.el.setAttribute('animation', 'property: scale; to: 1.1 1.1 1.1; dur: 200; easing: easeInOutQuad');
+                this.el.setAttribute('animation', 'property: scale; to: 0.5 0.5 0.5; dur: 200; easing: easeInOutQuad');
                 setTimeout(() => {
                     this.el.setAttribute('animation', 'property: scale; to: 1 1 1; dur: 200; easing: easeInOutQuad');
                 }, 200);
