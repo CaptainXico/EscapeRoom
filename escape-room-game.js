@@ -135,10 +135,18 @@ document.addEventListener('DOMContentLoaded', function() {
                 gameState.foundSymbols.push(symbol);
                 this.el.dataset.found = 'true';
                 
-                // Visual feedback
-                this.el.setAttribute('animation', 'property: scale; to: 0.5 0.5 0.5; dur: 200; easing: easeInOutQuad');
+                // Get current scale
+                const currentScale = this.el.getAttribute('scale');
+                const scaleUp = {
+                    x: currentScale.x * 1.1,
+                    y: currentScale.y * 1.1, 
+                    z: currentScale.z * 1.1
+                };
+                
+                // Visual feedback - scale up relative to current size
+                this.el.setAttribute('animation', `property: scale; to: ${scaleUp.x} ${scaleUp.y} ${scaleUp.z}; dur: 200; easing: easeInOutQuad`);
                 setTimeout(() => {
-                    this.el.setAttribute('animation', 'property: scale; to: 0.5 0.5 0.5; dur: 200; easing: easeInOutQuad');
+                    this.el.setAttribute('animation', `property: scale; to: ${currentScale.x} ${currentScale.y} ${currentScale.z}; dur: 200; easing: easeInOutQuad`);
                 }, 200);
 
                 // Show symbol notification
