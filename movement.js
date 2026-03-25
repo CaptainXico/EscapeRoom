@@ -13,7 +13,7 @@ window.addEventListener('load', () => {
   }
 
   // LEFT CONTROLLER MOVEMENT (uses rig rotation)
-const speed = 1; // meters per second
+const speed = 0.5; // meters per second
 
 AFRAME.registerComponent('smooth-locomotion', {
   init() {
