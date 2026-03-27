@@ -161,6 +161,13 @@ document.addEventListener('DOMContentLoaded', function() {
         },
 
         showNotification(message) {
+            // Try VR UI first, fallback to DOM
+            if (window.VRUIManager && VRUIManager.showNotification(message, 2000)) {
+                // VR UI handled it
+                return;
+            }
+
+            // Fallback to DOM for non-VR
             const notification = document.createElement('div');
             notification.style.cssText = `
                 position: fixed;
@@ -249,6 +256,13 @@ Three symbols hold the key to light.
 Find them all and speak their truth,
 To escape the darkness of this roof.`;
 
+            // Try VR UI first, fallback to DOM
+            if (window.VRUIManager && VRUIManager.showRiddle(riddleText)) {
+                // VR UI handled it
+                return;
+            }
+
+            // Fallback to DOM for non-VR
             const riddleBox = document.createElement('div');
             riddleBox.style.cssText = `
                 position: fixed;
@@ -351,6 +365,13 @@ To escape the darkness of this roof.`;
         },
 
         showSymbolSelector() {
+            // Try VR UI first, fallback to DOM
+            if (window.VRUIManager && VRUIManager.showSymbolSelector(gameState.foundSymbols, gameState.currentInput)) {
+                // VR UI handled it
+                return;
+            }
+
+            // Fallback to DOM for non-VR
             // Remove existing selector if present
             const existing = document.getElementById('symbol-selector');
             if (existing) existing.remove();
@@ -536,6 +557,13 @@ To escape the darkness of this roof.`;
         },
 
         showVictoryScreen() {
+            // Try VR UI first, fallback to DOM
+            if (window.VRUIManager && VRUIManager.showVictoryScreen()) {
+                // VR UI handled it
+                return;
+            }
+
+            // Fallback to DOM for non-VR
             // Enable desktop cursor for victory screen interaction
             enableDesktopCursor();
             
