@@ -111,9 +111,13 @@ document.addEventListener('DOMContentLoaded', function() {
     // Register puzzle piece component
     AFRAME.registerComponent('puzzle-piece', {
         init() {
-            // Add hover detection
+            // Add hover detection for both PC and VR
             this.el.addEventListener('mouseenter', () => this.onHover());
             this.el.addEventListener('mouseleave', () => this.onUnhover());
+            
+            // VR controller hover detection
+            this.el.addEventListener('raycaster-intersected', () => this.onHover());
+            this.el.addEventListener('raycaster-intersected-cleared', () => this.onUnhover());
         },
 
         onHover() {
@@ -184,9 +188,13 @@ document.addEventListener('DOMContentLoaded', function() {
     // Register note puzzle component
     AFRAME.registerComponent('note-puzzle', {
         init() {
-            // Add hover detection
+            // Add hover detection for both PC and VR
             this.el.addEventListener('mouseenter', () => this.onHover());
             this.el.addEventListener('mouseleave', () => this.onUnhover());
+            
+            // VR controller hover detection
+            this.el.addEventListener('raycaster-intersected', () => this.onHover());
+            this.el.addEventListener('raycaster-intersected-cleared', () => this.onUnhover());
         },
 
         onHover() {
@@ -280,9 +288,13 @@ To escape the darkness of this roof.`;
     // Register gravestone puzzle component
     AFRAME.registerComponent('gravestone-puzzle', {
         init() {
-            // Add hover detection
+            // Add hover detection for both PC and VR
             this.el.addEventListener('mouseenter', () => this.onHover());
             this.el.addEventListener('mouseleave', () => this.onUnhover());
+            
+            // VR controller hover detection
+            this.el.addEventListener('raycaster-intersected', () => this.onHover());
+            this.el.addEventListener('raycaster-intersected-cleared', () => this.onUnhover());
         },
 
         onHover() {
@@ -463,9 +475,13 @@ To escape the darkness of this roof.`;
     // Register escape door component
     AFRAME.registerComponent('escape-door', {
         init() {
-            // Add hover detection
+            // Add hover detection for both PC and VR
             this.el.addEventListener('mouseenter', () => this.onHover());
             this.el.addEventListener('mouseleave', () => this.onUnhover());
+            
+            // VR controller hover detection
+            this.el.addEventListener('raycaster-intersected', () => this.onHover());
+            this.el.addEventListener('raycaster-intersected-cleared', () => this.onUnhover());
         },
 
         onHover() {
@@ -639,13 +655,13 @@ To escape the darkness of this roof.`;
     console.log('Escape Room Game Initialized');
     console.log('Find 3 symbols and solve the gravestone puzzle to escape!');
     
-    // Global E key handler for interactions
+    // Global interaction handler for both PC (E key) and VR (trigger)
     document.addEventListener('keydown', (e) => {
         if (e.key.toLowerCase() === 'e' && gameState.hoveredObject) {
             e.preventDefault();
             console.log('E key pressed on object:', gameState.hoveredObject);
             
-            // Call the interact method if it exists
+            // Call interact method if it exists
             const component = gameState.hoveredObject.components;
             if (component && component['puzzle-piece']) {
                 component['puzzle-piece'].interact();
@@ -655,6 +671,41 @@ To escape the darkness of this roof.`;
                 component['gravestone-puzzle'].interact();
             } else if (component && component['escape-door']) {
                 component['escape-door'].interact();
+            }
+        }
+    });
+
+    // VR Controller interaction handler
+    document.addEventListener('controllerconnected', (e) => {
+        console.log('Controller connected:', e.detail.name);
+    });
+
+    // Listen for controller trigger events
+    document.addEventListener('mousedown', (e) => {
+        // Check if this is a controller trigger event
+        if (e.target && e.target.hasAttribute('vive-controls') || 
+            e.target.hasAttribute('oculus-touch-controls') ||
+            e.target.hasAttribute('hand-controls')) {
+            
+            // Check if controller is pointing at something
+            const raycaster = e.target.components.raycaster;
+            if (raycaster && raycaster.intersections.length > 0) {
+                const intersection = raycaster.intersections[0];
+                const hoveredObject = intersection.object.el;
+                
+                console.log('VR trigger on object:', hoveredObject);
+                
+                // Call interact method if it exists
+                const component = hoveredObject.components;
+                if (component && component['puzzle-piece']) {
+                    component['puzzle-piece'].interact();
+                } else if (component && component['note-puzzle']) {
+                    component['note-puzzle'].interact();
+                } else if (component && component['gravestone-puzzle']) {
+                    component['gravestone-puzzle'].interact();
+                } else if (component && component['escape-door']) {
+                    component['escape-door'].interact();
+                }
             }
         }
     });
