@@ -19,7 +19,7 @@
 
       <a-assets>
         <a-asset-item id="ctree" src="dead_tree.glb"></a-asset-item>
-        <a-asset-item id="grave" src="obelisk.glb"></a-asset-item>
+        <a-asset-item id="obe" src="obelisk.glb"></a-asset-item>
         <a-asset-item id="note" src="book.glb"></a-asset-item>
         <a-asset-item id="crystal" src="crystal.glb"></a-asset-item>
         <a-asset-item id="magical_book" src="magical_book.glb"></a-asset-item>
@@ -54,6 +54,7 @@
       
       <!-- Interactive Tree with hidden symbol -->
       <a-entity
+        id="tree"
         gltf-model="#ctree"
         position="3.5 -0.2 -3"
         rotation="0 180 0"
@@ -65,7 +66,8 @@
       </a-entity>
 
       <!-- Floating crystal with symbol -->
-      <a-entity id="crystal"
+      <a-entity
+        id="crystal"
         gltf-model="#crystal"
         position="-3 2 3"
         rotation="0 0 0"
@@ -78,7 +80,8 @@
       </a-entity>
 
        <!-- Ancient book with symbol -->
-      <a-entity id="magical_book"
+      <a-entity
+        id="magical_book"
         gltf-model="#magical_book"
         position="3.9 1.48 2.27"
         rotation="90 0 0"
@@ -91,6 +94,7 @@
 
       <!-- Interactive Note with riddle -->
       <a-entity
+        id="note"
         gltf-model="#note"
         position="-4 0 -0.5"
         rotation="0 90 0"
@@ -101,7 +105,8 @@
       
       <!-- Interactive Gravestone with puzzle input -->
       <a-entity
-        gltf-model="#grave"
+        id="oblisk"
+        gltf-model="#obe"
         position="-2 0 -3"
         rotation="0 0 0"
         scale="4 4 4"
