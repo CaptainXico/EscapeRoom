@@ -189,13 +189,14 @@ document.addEventListener('DOMContentLoaded', function() {
         showVictoryScreen() {
             if (!isVR) return false;
             
-            const newPanel = this.createTextPanel(
+            const panel = this.createTextPanel(
                 '🎉 ESCAPE ROOM COMPLETE! 🎉',
                 'You solved the mystery and escaped!',
                 [{ text: 'Play Again', color: '#00ff00', onClick: () => location.reload() }]
             );
             
             // Make victory screen larger
+            const newPanel = document.querySelector('#vr-panel');
             if (newPanel) {
                 newPanel.setAttribute('scale', '1.5 1.5 1.5');
             }
