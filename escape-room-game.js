@@ -586,16 +586,28 @@ To escape the darkness of this roof.`;
             victoryScreen.innerHTML = `
                 <h1 style="font-size: 48px; margin-bottom: 20px; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">🎉 ESCAPE ROOM COMPLETE! 🎉</h1>
                 <p style="font-size: 24px; margin-bottom: 30px;">You solved the mystery and escaped!</p>
-                <button onclick="location.reload()" style="
-                    background: white;
-                    color: black;
-                    border: none;
-                    padding: 15px 30px;
-                    border-radius: 10px;
-                    cursor: pointer;
-                    font-size: 18px;
-                    font-weight: bold;
-                ">Play Again</button>
+                <div style="display: flex; gap: 20px; flex-wrap: wrap; justify-content: center;">
+                    <button onclick="window.open('https://captainxico.github.io/EscapeRoom_lvl2/', '_blank')" style="
+                        background: #ff6b35;
+                        color: white;
+                        border: none;
+                        padding: 15px 30px;
+                        border-radius: 10px;
+                        cursor: pointer;
+                        font-size: 18px;
+                        font-weight: bold;
+                    ">LEVEL 2</button>
+                    <button onclick="location.reload()" style="
+                        background: white;
+                        color: black;
+                        border: none;
+                        padding: 15px 30px;
+                        border-radius: 10px;
+                        cursor: pointer;
+                        font-size: 18px;
+                        font-weight: bold;
+                    ">Play Again</button>
+                </div>
             `;
             document.body.appendChild(victoryScreen);
         },

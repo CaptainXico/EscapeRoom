@@ -192,7 +192,10 @@ document.addEventListener('DOMContentLoaded', function() {
             const panel = this.createTextPanel(
                 '🎉 ESCAPE ROOM COMPLETE! 🎉',
                 'You solved the mystery and escaped!',
-                [{ text: 'Play Again', color: '#00ff00', onClick: () => location.reload() }]
+                [
+                    { text: 'LEVEL 2', color: '#ff6b35', onClick: () => window.open('https://captainxico.github.io/EscapeRoom_lvl2/', '_blank') },
+                    { text: 'Play Again', color: '#00ff00', onClick: () => location.reload() }
+                ]
             );
             
             // Make victory screen larger
