@@ -1,6 +1,12 @@
 // escape-room-game.js - Core escape room game logic
 
 document.addEventListener('DOMContentLoaded', function() {
+    // Detect if user is on mobile device
+    function isMobile() {
+        return (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 
+                (window.innerWidth <= 768 && 'ontouchstart' in window));
+    }
+
     // Game state
     const gameState = {
         foundSymbols: [],
@@ -217,7 +223,8 @@ document.addEventListener('DOMContentLoaded', function() {
         },
 
         showHoverHint() {
-            // Show "Press E" hint
+            // Show appropriate hint based on device
+            const hintText = isMobile() ? 'Tap to read note' : 'Press E to read note';
             const hint = document.createElement('div');
             hint.id = 'hover-hint';
             hint.style.cssText = `
@@ -234,7 +241,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 z-index: 1500;
                 pointer-events: none;
             `;
-            hint.textContent = 'Press E to read note';
+            hint.textContent = hintText;
             document.body.appendChild(hint);
         },
 
@@ -324,7 +331,8 @@ To escape the darkness of this roof.`;
         },
 
         showHoverHint() {
-            // Show "Press E" hint
+            // Show appropriate hint based on device
+            const hintText = isMobile() ? 'Tap to input symbols' : 'Press E to input symbols';
             const hint = document.createElement('div');
             hint.id = 'hover-hint';
             hint.style.cssText = `
@@ -341,7 +349,7 @@ To escape the darkness of this roof.`;
                 z-index: 1500;
                 pointer-events: none;
             `;
-            hint.textContent = 'Press E to input symbols';
+            hint.textContent = hintText;
             document.body.appendChild(hint);
         },
 
@@ -518,7 +526,9 @@ To escape the darkness of this roof.`;
         },
 
         showHoverHint() {
-            const message = gameState.doorUnlocked ? 'Press E to escape!' : 'Press E to try door';
+            const message = gameState.doorUnlocked 
+                ? (isMobile() ? 'Tap to escape!' : 'Press E to escape!') 
+                : (isMobile() ? 'Tap to try door' : 'Press E to try door');
             const hint = document.createElement('div');
             hint.id = 'hover-hint';
             hint.style.cssText = `
@@ -749,6 +759,29 @@ To escape the darkness of this roof.`;
             }
         }
     });
+    
+    // Mobile touch interaction handler
+    if (isMobile()) {
+        document.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            
+            if (gameState.hoveredObject) {
+                console.log('Mobile tap on object:', gameState.hoveredObject);
+                
+                // Call interact method if it exists
+                const component = gameState.hoveredObject.components;
+                if (component && component['puzzle-piece']) {
+                    component['puzzle-piece'].interact();
+                } else if (component && component['note-puzzle']) {
+                    component['note-puzzle'].interact();
+                } else if (component && component['gravestone-puzzle']) {
+                    component['gravestone-puzzle'].interact();
+                } else if (component && component['escape-door']) {
+                    component['escape-door'].interact();
+                }
+            }
+        }, { passive: false });
+    }
     
     // Global click handler to manage first click after UI
     document.addEventListener('click', (e) => {
