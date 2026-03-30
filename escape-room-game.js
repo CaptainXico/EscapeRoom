@@ -82,36 +82,53 @@ document.addEventListener('DOMContentLoaded', function() {
         uiElement.style.pointerEvents = 'auto';
         document.body.appendChild(uiElement);
         
-        // Exit pointer lock to show cursor
-        enableDesktopCursor();
+        // Exit pointer lock to show cursor (only on desktop)
+        if (!isMobile()) {
+            enableDesktopCursor();
+        }
         
-        // Add close button handler
+        // Add close button handler for both click and touch
         const closeButtons = uiElement.querySelectorAll('button');
         closeButtons.forEach(button => {
             if (button.textContent.toLowerCase().includes('close') || 
                 button.textContent.toLowerCase().includes('cancel')) {
+                
+                // Handle desktop clicks
                 button.addEventListener('click', (e) => {
                     console.log('Close button clicked');
                     e.preventDefault();
                     e.stopPropagation();
                     uiElement.remove();
-                    enableVRCursorImmediate(); // Use immediate pointer lock
+                    if (!isMobile()) {
+                        enableVRCursorImmediate(); // Use immediate pointer lock
+                    }
+                    if (closeCallback) closeCallback();
+                });
+                
+                // Handle mobile touches
+                button.addEventListener('touchend', (e) => {
+                    console.log('Close button touched');
+                    e.preventDefault();
+                    e.stopPropagation();
+                    uiElement.remove();
                     if (closeCallback) closeCallback();
                 });
             }
         });
         
-        // Also close on Escape key
-        const escapeHandler = (e) => {
-            if (e.key === 'Escape') {
-                console.log('Escape key pressed');
-                uiElement.remove();
-                enableVRCursorImmediate(); // Use immediate pointer lock
-                document.removeEventListener('keydown', escapeHandler);
-                if (closeCallback) closeCallback();
-            }
-        };
-        document.addEventListener('keydown', escapeHandler);
+        // Also close on Escape key (desktop only)
+        if (!isMobile()) {
+            const escapeHandler = (e) => {
+                if (e.key === 'Escape') {
+                    console.log('Escape key pressed');
+                    uiElement.remove();
+                    enableVRCursorImmediate(); // Use immediate pointer lock
+                    document.removeEventListener('keydown', escapeHandler);
+                    if (closeCallback) closeCallback();
+                }
+            };
+            document.addEventListener('keydown', escapeHandler);
+        }
     }
 
     // Register puzzle piece component
@@ -405,9 +422,9 @@ To escape the darkness of this roof.`;
             selector.innerHTML = `
                 <h3 style="margin-top: 0; color: #00ff00;">Choose Symbol</h3>
                 <p style="margin-bottom: 20px;">Current: ${currentDisplay}</p>
-                <div style="display: flex; gap: 15px; margin-bottom: 20px;">
+                <div id="symbol-buttons" style="display: flex; gap: 15px; margin-bottom: 20px;">
                     ${symbols.map(symbol => `
-                        <button onclick="selectSymbol('${symbol}')" style="
+                        <button data-symbol="${symbol}" style="
                             background: #333;
                             color: white;
                             border: 2px solid #00ff00;
@@ -416,11 +433,10 @@ To escape the darkness of this roof.`;
                             cursor: pointer;
                             font-size: 24px;
                             transition: all 0.3s;
-                        " onmouseover="this.style.background='#00ff00'; this.style.color='black'" 
-                           onmouseout="this.style.background='#333'; this.style.color='white'">${symbol}</button>
+                        ">${symbol}</button>
                     `).join('')}
                 </div>
-                <button onclick="clearSymbols()" style="
+                <button id="clear-btn" style="
                     background: #ff0000;
                     color: white;
                     border: none;
@@ -438,6 +454,38 @@ To escape the darkness of this roof.`;
                     cursor: pointer;
                 ">Close</button>
             `;
+
+            // Add event listeners for symbol buttons
+            const symbolButtons = selector.querySelectorAll('[data-symbol]');
+            symbolButtons.forEach(button => {
+                const symbol = button.dataset.symbol;
+                
+                // Desktop click
+                button.addEventListener('click', () => {
+                    window.selectSymbol(symbol);
+                });
+                
+                // Mobile touch
+                button.addEventListener('touchend', (e) => {
+                    e.preventDefault();
+                    window.selectSymbol(symbol);
+                });
+                
+                // Mobile hover effects
+                button.addEventListener('touchstart', (e) => {
+                    e.preventDefault();
+                    button.style.background = '#00ff00';
+                    button.style.color = 'black';
+                });
+            });
+
+            // Add event listeners for clear button
+            const clearBtn = selector.querySelector('#clear-btn');
+            clearBtn.addEventListener('click', window.clearSymbols);
+            clearBtn.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                window.clearSymbols();
+            });
 
             showUIWithCursor(selector);
         },
@@ -763,9 +811,29 @@ To escape the darkness of this roof.`;
     // Mobile touch interaction handler
     if (isMobile()) {
         document.addEventListener('touchstart', (e) => {
-            e.preventDefault();
+            // Don't prevent default for UI interactions
+            // Only handle 3D object interactions when not touching UI elements
             
+            // Check if touch is on UI elements (buttons, overlays, etc.)
+            const touch = e.touches[0];
+            const element = document.elementFromPoint(touch.clientX, touch.clientY);
+            
+            // If touching UI elements, let them handle the touch normally
+            if (element && (
+                element.tagName === 'BUTTON' ||
+                element.tagName === 'A' ||
+                element.closest('button') ||
+                element.closest('a') ||
+                element.closest('#symbol-selector') ||
+                element.closest('#mobile-overlay') ||
+                element.closest('[class*="close-btn"]')
+            )) {
+                return; // Let UI elements handle their own touch events
+            }
+            
+            // Handle 3D object interactions
             if (gameState.hoveredObject) {
+                e.preventDefault(); // Only prevent default for 3D interactions
                 console.log('Mobile tap on object:', gameState.hoveredObject);
                 
                 // Call interact method if it exists
